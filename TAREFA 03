@@ -49,6 +49,8 @@ CONSTRAINT fk_endereco_empresa FOREIGN KEY (endereco_id) REFERENCES endereco (id
 );
 
 INSERT INTO empresa (nome, razao_social, celular, cnpj, email, endereco_id) VALUES ('Nextage', 'Nextage', '44555666', '87600000', 'nexta@bexte', 1);
+INSERT INTO empresa (nome, razao_social, celular, cnpj, email, endereco_id) VALUES ('Empresa', 'Empresa', '333333445', '87750000', 'empresa@empresa', 2);
+INSERT INTO empresa (nome, razao_social, celular, cnpj, email, endereco_id) VALUES ('Upcode', 'Upcode', '11111111', '87608678', 'upcode@upcode', 3);
 
 CREATE TABLE colaborador (
 id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -69,6 +71,12 @@ CONSTRAINT fk_empresa_colaborador FOREIGN KEY (empresa_id) REFERENCES empresa (i
 
 INSERT INTO colaborador (nome, identidade, cpf, data_entrada_sistema, celular, email, endereco_id, empresa_id) 
 VALUES ('Misael', '4343434343', '12323232', '2022-04-04', '4343434', 'misael@misael', 1, 1);
+INSERT INTO colaborador (nome, identidade, cpf, data_entrada_sistema, celular, email, endereco_id, empresa_id) 
+VALUES ('Jose', '00912345', '89083245', '2022-06-23', '88990023', 'jose@jose', 2, 2);
+INSERT INTO colaborador (nome, identidade, cpf, data_entrada_sistema, celular, email, endereco_id, empresa_id) 
+VALUES ('Jean', '1004567777', '0982345678', '2022-05-08', '9988778899', 'jean@jean', 3, 3);
+
+
 
 CREATE TABLE horas (
 id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -81,6 +89,8 @@ CONSTRAINT fk_colaborador_horas FOREIGN KEY (colaborador_id) REFERENCES colabora
 
 
 INSERT INTO horas (tipo, colaborador_id) VALUES ('E', 1);
+INSERT INTO horas (tipo, colaborador_id) VALUES ('E', 2);
+INSERT INTO horas (tipo, colaborador_id) VALUES ('E', 3);
 
 CREATE TABLE salario (
 id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -97,4 +107,9 @@ CONSTRAINT fk_colaborador_salario FOREIGN KEY (colaborador_id) REFERENCES colabo
 );
 
 INSERT INTO salario (inss, valor_hora, quantidade_hora_mes, salario_liquido, salario_bruto, fgts, quantidade_horas_faltas_mes, quantidade_hora_extra_mes, colaborador_id) 
-VALUES (100, 50, 12323, 15, 43434, 4343, 10, 10, 1);
+VALUES (100, 50, 180, 3000, 190, 2800, 10, 10, 1);
+INSERT INTO salario (inss, valor_hora, quantidade_hora_mes, salario_liquido, salario_bruto, fgts, quantidade_horas_faltas_mes, quantidade_hora_extra_mes, colaborador_id) 
+VALUES (1080, 100, 180, 15000, 20000, 129, 10, 10, 2);
+INSERT INTO salario (inss, valor_hora, quantidade_hora_mes, salario_liquido, salario_bruto, fgts, quantidade_horas_faltas_mes, quantidade_hora_extra_mes, colaborador_id) 
+VALUES (100, 25, 230, 2000, 1567, 123, 10, 10, 3);
+
