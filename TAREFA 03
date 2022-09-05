@@ -72,7 +72,7 @@ celular VARCHAR(20) NOT NULL,
 email VARCHAR(30) NOT NULL,
 endereco_id INT NOT NULL,
 empresa_id INT NOT NULL,
-CONSTRAINT fk_endereco_empresa FOREIGN KEY (endereco_id) REFERENCES endereco (id),
+CONSTRAINT fk_empresa_endereco FOREIGN KEY (endereco_id) REFERENCES endereco (id),
 CONSTRAINT fk_empresa_colaborador FOREIGN KEY (empresa_id) REFERENCES empresa (id)
 );
 
