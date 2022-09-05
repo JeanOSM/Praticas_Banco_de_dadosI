@@ -1,0 +1,100 @@
+DROP DATABASE IF EXISTS ponto;
+CREATE DATABASE ponto;
+USE ponto;
+
+CREATE TABLE estado  (
+id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+nome VARCHAR(255) NOT NULL,
+sigla CHAR(2) NOT NULL UNIQUE
+);
+
+INSERT INTO estado (nome, sigla) VALUES ('Parana', 'PR');
+INSERT INTO estado (nome, sigla) VALUES ('São Paulo', 'SP');
+INSERT INTO estado (nome, sigla) VALUES ('Minas Gerais', 'MG');
+
+CREATE TABLE cidade  (
+id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+nome VARCHAR(255) NOT NULL,
+estado_id INT NOT NULL,
+CONSTRAINT fk_estado_cidade FOREIGN KEY (estado_id) REFERENCES estado (id)
+);
+
+INSERT INTO cidade (nome, estado_id) VALUES ('Nova Esperança', 1);
+INSERT INTO cidade (nome, estado_id) VALUES ('Jundiaí', 2);
+INSERT INTO cidade (nome, estado_id) VALUES ('Uberaba', 3);
+
+CREATE TABLE endereco  (
+id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+nome_rua VARCHAR(255) NOT NULL,
+cep VARCHAR(15) NOT NULL,
+numero INT NOT NULL,
+cidade_id INT NOT NULL,
+CONSTRAINT fk_cidade_endereco FOREIGN KEY (cidade_id) REFERENCES cidade (id)
+);
+
+INSERT INTO endereco (nome_rua, cep, numero, cidade_id) VALUES ('Rua paraiba', '87600000', 12, 1);
+INSERT INTO endereco (nome_rua, cep, numero, cidade_id) VALUES ('Rua Cassava', '87711700', 1234, 2);
+INSERT INTO endereco (nome_rua, cep, numero, cidade_id) VALUES ('Rua Pernambuco', '87711600', 5678, 3);
+
+CREATE TABLE empresa (
+id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+nome VARCHAR(255) NOT NULL,
+razao_social VARCHAR(15) NOT NULL,
+celular VARCHAR(255) NOT NULL,
+cnpj VARCHAR(15) NOT NULL,
+data_cadastro DATETIME DEFAULT CURRENT_TIMESTAMP,
+email VARCHAR(30) NOT NULL,
+endereco_id INT NOT NULL,
+CONSTRAINT fk_endereco_empresa FOREIGN KEY (endereco_id) REFERENCES endereco (id)
+);
+
+INSERT INTO empresa (nome, razao_social, celular, cnpj, email, endereco_id) VALUES ('Nextage', 'Nextage', '44555666', '87600000', 'nexta@bexte', 1);
+
+CREATE TABLE colaborador (
+id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+nome VARCHAR(255) NOT NULL,
+identidade VARCHAR(15) NOT NULL,
+cpf VARCHAR(255) NOT NULL,
+cnpj VARCHAR(15) NOT NULL,
+data_entrada_sistema DATETIME DEFAULT CURRENT_TIMESTAMP,
+data_entrada_empresa DATETIME,
+celular VARCHAR(20) NOT NULL,
+email VARCHAR(30) NOT NULL,
+endereco_id INT NOT NULL,
+empresa_id INT NOT NULL,
+CONSTRAINT fk_endereco_empresa FOREIGN KEY (endereco_id) REFERENCES endereco (id),
+CONSTRAINT fk_empresa_colaborador FOREIGN KEY (empresa_id) REFERENCES empresa (id)
+);
+
+
+INSERT INTO colaborador (nome, identidade, cpf, data_entrada_sistema, celular, email, endereco_id, empresa_id) 
+VALUES ('Misael', '4343434343', '12323232', '2022-04-04', '4343434', 'misael@misael', 1, 1);
+
+CREATE TABLE horas (
+id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+tipo CHAR(1) NOT NULL,
+justificativa VARCHAR(100),
+hora_registrada DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+colaborador_id INT NOT NULL,
+CONSTRAINT fk_colaborador_horas FOREIGN KEY (colaborador_id) REFERENCES colaborador (id)
+);
+
+
+INSERT INTO horas (tipo, colaborador_id) VALUES ('E', 1);
+
+CREATE TABLE salario (
+id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+inss DECIMAL(8, 2) NOT NULL,
+valor_hora DECIMAL(8, 2) NOT NULL,
+quantidade_hora_mes DECIMAL(8,2) NOT NULL,
+salario_liquido DECIMAL(8,2) NOT NULL,
+salario_bruto DECIMAL(8,2) NOT NULL,
+fgts DECIMAL (8,2) NOT NULL,
+quantidade_horas_faltas_mes DECIMAL(8,2) NOT NULL,
+quantidade_hora_extra_mes DECIMAL(8,2) NOT NULL,
+colaborador_id INT NOT NULL,
+CONSTRAINT fk_colaborador_salario FOREIGN KEY (colaborador_id) REFERENCES colaborador (id)
+);
+
+INSERT INTO salario (inss, valor_hora, quantidade_hora_mes, salario_liquido, salario_bruto, fgts, quantidade_horas_faltas_mes, quantidade_hora_extra_mes, colaborador_id) 
+VALUES (100, 50, 12323, 15, 43434, 4343, 10, 10, 1);
