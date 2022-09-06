@@ -84,7 +84,7 @@ VALUES ('Jose', '00912345', '89083245', '2022-06-23', '88990023', 'jose@jose', 2
 INSERT INTO colaborador (nome, identidade, cpf, data_entrada_sistema, celular, email, endereco_id, empresa_id) 
 VALUES ('Jean', '1004567777', '0982345678', '2022-05-08', '9988778899', 'jean@jean', 3, 3);
 
-SELECT * colaborador;
+SELECT * FROM colaborador;
 
 CREATE TABLE horas (
 id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -123,5 +123,5 @@ VALUES (1080, 100, 180, 15000, 20000, 129, 10, 10, 2);
 INSERT INTO salario (inss, valor_hora, quantidade_hora_mes, salario_liquido, salario_bruto, fgts, quantidade_horas_faltas_mes, quantidade_hora_extra_mes, colaborador_id) 
 VALUES (100, 25, 230, 2000, 1567, 123, 10, 10, 3);
 
-SELECT * FROM salário;
+SELECT * FROM salario;
 
