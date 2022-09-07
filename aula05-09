@@ -9,14 +9,14 @@ id INT AUTO_INCREMENT UNIQUE NOT NULL
 ,ativo CHAR (1) NOT NULL DEFAULT 'S'
 ,CONSTRAINT pk_estado PRIMARY KEY (id)
 );
-
-CREATE TABLE cicade(
+DROP TABLE IF EXISTS cidade;
+CREATE TABLE cidade(
 id INT AUTO_INCREMENT NOT NULL UNIQUE 
 ,nome VARCHAR (100) NOT NULL
 ,ativo CHAR(1) NOT NULL DEFAULT 'S'
 ,estado_id INT NOT NULL
 ,CONSTRAINT fk_estado FOREIGN KEY (estado_id) REFERENCES estado (id)
-,CONSTRAINT cidade_unica UNIQUE (cidade,estado_id)
+,CONSTRAINT cidade_unica UNIQUE (nome,estado_id)
 ,CONSTRAINT pk_cidade PRIMARY KEY (id)
 );
 
@@ -27,17 +27,81 @@ id INT NOT NULL AUTO_INCREMENT UNIQUE
 ,numero CHAR (20) NOT NULL
 ,bairro VARCHAR (100) NOT NULL
 ,cidade_id INT NOT NULL
+,cidade_estado_id INT NOT NULL 
+,CONSTRAINT fk_cidade_estado FOREIGN KEY (cidade_estado_id) REFERENCES estado (id)
 ,CONSTRAINT fk_endereco  FOREIGN KEY (cidade_id) REFERENCES cidade (id) 
 
 );
 
 
 
-CREATE TABLE c_d (
-id INT NOT NULL AUTO_INCREMENT UNIQUE
-,nome VARCHAR (50) NOT NULL UNIQUE 
+CREATE TABLE cd (
+id INT PRIMARY KEY NOT NULL AUTO_INCREMENT UNIQUE
+,nome VARCHAR (50) NOT NULL 
 ,cnpj VARCHAR (50) NOT NULL UNIQUE 
 ,endereco_id INT NOT NULL 
-,CONSTRAINT fk_c_d FOREIGN KEY (endereco_id) REFERENCES endereco(id)
+,endereco_cidade_id INT NOT NULL
+,endereco_cidade_estado_id INT NOT NULL
+,CONSTRAINT fk_cd FOREIGN KEY (endereco_id) REFERENCES endereco(id)
+,CONSTRAINT fk_endereco_cidade_cd FOREIGN KEY (endereco_cidade_id) REFERENCES cidade(id)
+,CONSTRAINT fk_endereco_cidade_estado_cd FOREIGN KEY (endereco_cidade_estado_id) REFERENCES estado(id)
 );
 
+
+CREATE TABLE industria (
+id INT PRIMARY KEY NOT NULL AUTO_INCREMENT UNIQUE
+,nome VARCHAR (50) NOT NULL 
+,cnpj CHAR (14) NOT NULL UNIQUE 
+,endereco_id INT NOT NULL
+,endereco_cidade_id INT NOT NULL 
+,endereco_cidade_estado_id INT NOT NULL
+,CONSTRAINT fk_endereco_ind FOREIGN KEY (endereco_id) REFERENCES endereco (id)
+,CONSTRAINT fk_endereco_cidade_ind FOREIGN KEY (endereco_cidade_id)REFERENCES cidade(id)
+,CONSTRAINT fk_endereco_cidade_estado_ind FOREIGN KEY (endereco_cidade_estado_id) REFERENCES estado (id)
+
+);
+
+
+CREATE TABLE supermercado (
+id INT PRIMARY KEY NOT NULL UNIQUE 
+,nome VARCHAR (50) NOT NULL 
+,cnpj CHAR (14) NOT NULL 
+,endereco_id INT NOT NULL 
+,endereco_cidade_id INT NOT NULL 
+,endereco_cidade_estado_id INT NOT NULL
+,CONSTRAINT fk_endereco_super FOREIGN KEY (endereco_id )REFERENCES endereco(id) 
+,CONSTRAINT fk_endereco_cidade_super FOREIGN KEY (endereco_cidade_id) REFERENCES cidade(id)
+,CONSTRAINT fk_endereco_cidade_estado_super FOREIGN KEY(endereco_cidade_estado_id) REFERENCES estado(id)
+);
+
+
+CREATE TABLE produto (
+id INT PRIMARY KEY AUTO_INCREMENT NOT NULL 
+,nome VARCHAR (50) NOT NULL
+,codigo_de_barras INT NOT NULL
+,preco DECIMAL(8,2) NOT NULL
+,custo DECIMAL(8,2) NOT NULL
+
+
+);
+
+CREATE TABLE pedido (
+id INT NOT NULL PRIMARY KEY AUTO_INCREMENT 
+,supermercado_id INT NOT NULL
+,cd_id INT NOT NULL
+,produto_id INT NOT NULL
+,CONSTRAINT fk_supermercado_pedido FOREIGN KEY (supermercado_id) REFERENCES supermercado (id) 
+,CONSTRAINT fk_cd_pedido FOREIGN KEY (cd_id) REFERENCES cd (id)
+,CONSTRAINT fk_produto_pedido FOREIGN KEY(produto_id) REFERENCES produto(id)
+);
+
+
+CREATE TABLE compra (
+id INT NOT NULL PRIMARY KEY AUTO_INCREMENT
+,cd_id INT NOT NULL
+,industria_id INT NOT NULL
+,produto_id INT NOT NULL
+,CONSTRAINT fk_cd_compra FOREIGN KEY (cd_id) REFERENCES cd(id)
+,CONSTRAINT fk_industria_compra FOREIGN KEY (industria_id) REFERENCES industria(id)
+,CONSTRAINT fk_produto_compra FOREIGN KEY (produto_id)REFERENCES produto(id) 
+);
