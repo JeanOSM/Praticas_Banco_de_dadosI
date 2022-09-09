@@ -9,17 +9,31 @@ id INT AUTO_INCREMENT UNIQUE NOT NULL
 ,ativo CHAR (1) NOT NULL DEFAULT 'S'
 ,CONSTRAINT pk_estado PRIMARY KEY (id)
 );
+
+INSERT INTO estado (nome,sigla) VALUES ('PARANÁ','PR');
+INSERT INTO estado (nome,sigla) VALUES ('SÃO PAULO','SP');
+INSERT INTO estado (nome,sigla) VALUES ('RIO DE JANEIRO','RJ');
+
+SELECT * FROM estado;
+
 DROP TABLE IF EXISTS cidade;
 CREATE TABLE cidade(
 id INT AUTO_INCREMENT NOT NULL UNIQUE 
 ,nome VARCHAR (100) NOT NULL
 ,ativo CHAR(1) NOT NULL DEFAULT 'S'
-,estado_id INT NOT NULL
+,estado_id INT NOT NULL 
 ,CONSTRAINT fk_estado FOREIGN KEY (estado_id) REFERENCES estado (id)
 ,CONSTRAINT cidade_unica UNIQUE (nome,estado_id)
 ,CONSTRAINT pk_cidade PRIMARY KEY (id)
 );
 
+INSERT INTO cidade (nome,estado_id) VALUES ('PARANAVAÍ',1); 
+INSERT INTO cidade (nome,estado_id) VALUES ('CAMPINAS',2); 
+INSERT INTO cidade (nome,estado_id) VALUES ('RIO DE JANEIRO',3); 
+INSERT INTO cidade (nome,estado_id) VALUES ('MARINGÁ',1); 
+INSERT INTO cidade (nome,estado_id) VALUES ('LONDRINA',1); 
+
+SELECT cidade.id, cidade.nome, estado.id, estado.nome, estado.sigla FROM cidade INNER JOIN estado ON cidade.estado_id = estado.id;
 
 CREATE TABLE endereco (
 id INT NOT NULL AUTO_INCREMENT UNIQUE 
@@ -30,10 +44,17 @@ id INT NOT NULL AUTO_INCREMENT UNIQUE
 ,cidade_estado_id INT NOT NULL 
 ,CONSTRAINT fk_cidade_estado FOREIGN KEY (cidade_estado_id) REFERENCES estado (id)
 ,CONSTRAINT fk_endereco  FOREIGN KEY (cidade_id) REFERENCES cidade (id) 
-
 );
 
+INSERT INTO endereco (rua,numero,bairro,cidade_id,cidade_estado_id) VALUES ('RUA: AMAPÁ','1040','CENTRO',1,1); -- PR
+INSERT INTO endereco (rua,numero,bairro,cidade_id,cidade_estado_id) VALUES ('RUA: COLOMBO','1020','CENTRO',4,1); -- MARINGA
+INSERT INTO endereco (rua,numero,bairro,cidade_id,cidade_estado_id) VALUES ('RUA: ZAREM','3000','LAPA',2,2);   -- SP
+INSERT INTO endereco (rua,numero,bairro,cidade_id,cidade_estado_id) VALUES ('RUA: CHAVES','4000','BARRA FUNDA',5,1); -- LONDRINA
+INSERT INTO endereco (rua,numero,bairro,cidade_id,cidade_estado_id) VALUES ('RUA: XALIM','7541','BARRA',3,3); -- RIO 
 
+SELECT endereco.id,endereco.rua, endereco.bairro,endereco.cidade_id, endereco.cidade_estado_id
+FROM endereco JOIN cidade ON endereco.cidade_id=cidade.id
+JOIN estado ON endereco.cidade_estado_id=estado.id;
 
 CREATE TABLE cd (
 id INT PRIMARY KEY NOT NULL AUTO_INCREMENT UNIQUE
@@ -47,11 +68,17 @@ id INT PRIMARY KEY NOT NULL AUTO_INCREMENT UNIQUE
 ,CONSTRAINT fk_endereco_cidade_estado_cd FOREIGN KEY (endereco_cidade_estado_id) REFERENCES estado(id)
 );
 
+INSERT INTO cd(nome,cnpj,endereco_id,endereco_cidade_id,endereco_cidade_estado_id) VALUES ('MELLO PEIXOTO','100010001234500',4,2,2);
+INSERT INTO cd(nome,cnpj,endereco_id,endereco_cidade_id,endereco_cidade_estado_id) VALUES ('CSD','100010001234501',2,4,1);
+INSERT INTO cd(nome,cnpj,endereco_id,endereco_cidade_id,endereco_cidade_estado_id) VALUES ('GAROTO LTDA','100010001234502',1,1,1);
+
+SELECT cd.id,cd.nome,cd.cnpj. cd.endereco_id, cd.endereco_cidade_id,cd.endereco_cidade_estado_id FROM cd JOIN cd.endereco=endereco.id;
+
 
 CREATE TABLE industria (
 id INT PRIMARY KEY NOT NULL AUTO_INCREMENT UNIQUE
 ,nome VARCHAR (50) NOT NULL 
-,cnpj CHAR (14) NOT NULL UNIQUE 
+,cnpj CHAR(14) NOT NULL UNIQUE 
 ,endereco_id INT NOT NULL
 ,endereco_cidade_id INT NOT NULL 
 ,endereco_cidade_estado_id INT NOT NULL
@@ -61,9 +88,15 @@ id INT PRIMARY KEY NOT NULL AUTO_INCREMENT UNIQUE
 
 );
 
+INSERT INTO industria (nome,cnpj,endereco_id ,endereco_cidade_id ,endereco_cidade_estado_id) VALUES ('YPE',12345678910147,3,2,2);
+INSERT INTO industria (nome,cnpj,endereco_id ,endereco_cidade_id ,endereco_cidade_estado_id) VALUES ('ALPES',12345678910148,5,3,3);
+INSERT INTO industria (nome,cnpj,endereco_id ,endereco_cidade_id ,endereco_cidade_estado_id) VALUES ('COCA-COLA',12345678910149,2,4,1);
+
+SELECT * FROM industria;
+
 
 CREATE TABLE supermercado (
-id INT PRIMARY KEY NOT NULL UNIQUE 
+id INT PRIMARY KEY NOT NULL UNIQUE 	AUTO_INCREMENT
 ,nome VARCHAR (50) NOT NULL 
 ,cnpj CHAR (14) NOT NULL 
 ,endereco_id INT NOT NULL 
@@ -74,19 +107,33 @@ id INT PRIMARY KEY NOT NULL UNIQUE
 ,CONSTRAINT fk_endereco_cidade_estado_super FOREIGN KEY(endereco_cidade_estado_id) REFERENCES estado(id)
 );
 
+INSERT INTO supermercado (nome,cnpj,endereco_id,endereco_cidade_id,endereco_cidade_estado_id) VALUES ('CIDADE CANÇÃO','12345678910126',1,1,1);
+INSERT INTO supermercado (nome,cnpj,endereco_id,endereco_cidade_id,endereco_cidade_estado_id) VALUES ('MUFFATO','12345678910125',1,1,1);
+INSERT INTO supermercado (nome,cnpj,endereco_id,endereco_cidade_id,endereco_cidade_estado_id) VALUES ('GUGÂO','12345678910124',1,1,1);
 
+SELECT * FROM supermercado;
+DROP TABLE IF EXISTS produto;
 CREATE TABLE produto (
-id INT PRIMARY KEY AUTO_INCREMENT NOT NULL 
+id INT PRIMARY KEY AUTO_INCREMENT NOT NULL UNIQUE
 ,nome VARCHAR (50) NOT NULL
-,codigo_de_barras INT NOT NULL
+,codigo_de_barras CHAR(20) NOT NULL
 ,preco DECIMAL(8,2) NOT NULL
 ,custo DECIMAL(8,2) NOT NULL
 
 
 );
 
+INSERT INTO produto (nome,codigo_de_barras,preco,custo) VALUES ('LAVA LOUÇAS',7896098904512,2.29,0.94);
+INSERT INTO produto (nome,codigo_de_barras,preco,custo) VALUES ('LAVA ROUPAS',7896098904513,15.90,9.45);
+INSERT INTO produto (nome,codigo_de_barras,preco,custo) VALUES ('TIRA MANCHAS',7896098904514,5.48,8.99);
+INSERT INTO produto (nome,codigo_de_barras,preco,custo) VALUES ('FANTA 2L','7896098904574',2.48,5.99);
+INSERT INTO produto (nome,codigo_de_barras,preco,custo) VALUES ('AMISTEL 355ML','7896098904518',1.59,2.29);
+
+SELECT * FROM produto;
+
+
 CREATE TABLE pedido (
-id INT NOT NULL PRIMARY KEY AUTO_INCREMENT 
+id INT NOT NULL PRIMARY KEY AUTO_INCREMENT UNIQUE 
 ,supermercado_id INT NOT NULL
 ,cd_id INT NOT NULL
 ,produto_id INT NOT NULL
@@ -95,9 +142,15 @@ id INT NOT NULL PRIMARY KEY AUTO_INCREMENT
 ,CONSTRAINT fk_produto_pedido FOREIGN KEY(produto_id) REFERENCES produto(id)
 );
 
+INSERT INTO pedido(supermercado_id,cd_id,produto_id) VALUES (1,2,1);
+INSERT INTO pedido(supermercado_id,cd_id,produto_id) VALUES (2,1,4);
+INSERT INTO pedido(supermercado_id,cd_id,produto_id) VALUES (3,3,5);
+
+
+SELECT * FROM pedido;
 
 CREATE TABLE compra (
-id INT NOT NULL PRIMARY KEY AUTO_INCREMENT
+id INT NOT NULL PRIMARY KEY AUTO_INCREMENT UNIQUE
 ,cd_id INT NOT NULL
 ,industria_id INT NOT NULL
 ,produto_id INT NOT NULL
@@ -105,3 +158,11 @@ id INT NOT NULL PRIMARY KEY AUTO_INCREMENT
 ,CONSTRAINT fk_industria_compra FOREIGN KEY (industria_id) REFERENCES industria(id)
 ,CONSTRAINT fk_produto_compra FOREIGN KEY (produto_id)REFERENCES produto(id) 
 );
+
+INSERT INTO compra (cd_id,industria_id,produto_id) VALUES(1,1,2);
+INSERT INTO compra (cd_id,industria_id,produto_id) VALUES(2,2,2);
+INSERT INTO compra (cd_id,industria_id,produto_id) VALUES(3,3,4);
+
+
+SELECT *FROM compra;
+
