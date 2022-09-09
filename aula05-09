@@ -52,7 +52,7 @@ INSERT INTO endereco (rua,numero,bairro,cidade_id,cidade_estado_id) VALUES ('RUA
 INSERT INTO endereco (rua,numero,bairro,cidade_id,cidade_estado_id) VALUES ('RUA: CHAVES','4000','BARRA FUNDA',5,1); -- LONDRINA
 INSERT INTO endereco (rua,numero,bairro,cidade_id,cidade_estado_id) VALUES ('RUA: XALIM','7541','BARRA',3,3); -- RIO 
 
-SELECT endereco.id,endereco.rua, endereco.bairro,endereco.cidade_id, endereco.cidade_estado_id
+SELECT endereco.id,endereco.rua, endereco.bairro,cidade.id,cidade.nome,estado.id,estado.nome,estado.sigla
 FROM endereco JOIN cidade ON endereco.cidade_id=cidade.id
 JOIN estado ON endereco.cidade_estado_id=estado.id;
 
@@ -72,7 +72,10 @@ INSERT INTO cd(nome,cnpj,endereco_id,endereco_cidade_id,endereco_cidade_estado_i
 INSERT INTO cd(nome,cnpj,endereco_id,endereco_cidade_id,endereco_cidade_estado_id) VALUES ('CSD','100010001234501',2,4,1);
 INSERT INTO cd(nome,cnpj,endereco_id,endereco_cidade_id,endereco_cidade_estado_id) VALUES ('GAROTO LTDA','100010001234502',1,1,1);
 
-SELECT cd.id,cd.nome,cd.cnpj. cd.endereco_id, cd.endereco_cidade_id,cd.endereco_cidade_estado_id FROM cd JOIN cd.endereco=endereco.id;
+SELECT cd.id, cd.nome, cd.cnpj,endereco.id,endereco.rua,endereco.numero,cidade.id,cidade.nome, estado.id,estado.nome,estado.sigla FROM cd 
+JOIN endereco ON cd.endereco_id= endereco.id 
+JOIN cidade ON cd.endereco_cidade_id=cidade.id
+JOIN estado ON cd.endereco_cidade_estado_id=estado.id;
 
 
 CREATE TABLE industria (
@@ -92,7 +95,10 @@ INSERT INTO industria (nome,cnpj,endereco_id ,endereco_cidade_id ,endereco_cidad
 INSERT INTO industria (nome,cnpj,endereco_id ,endereco_cidade_id ,endereco_cidade_estado_id) VALUES ('ALPES',12345678910148,5,3,3);
 INSERT INTO industria (nome,cnpj,endereco_id ,endereco_cidade_id ,endereco_cidade_estado_id) VALUES ('COCA-COLA',12345678910149,2,4,1);
 
-SELECT * FROM industria;
+SELECT industria.nome,industria.cnpj,endereco.id,endereco.rua,endereco.numero,cidade.id,cidade.nome,estado.id,estado.nome,estado.sigla FROM industria 
+JOIN endereco ON industria.endereco_id=endereco.id
+JOIN cidade ON industria.endereco_cidade_id=cidade.id
+JOIN estado ON industria.endereco_cidade_estado_id=estado.id; 
 
 
 CREATE TABLE supermercado (
@@ -111,7 +117,13 @@ INSERT INTO supermercado (nome,cnpj,endereco_id,endereco_cidade_id,endereco_cida
 INSERT INTO supermercado (nome,cnpj,endereco_id,endereco_cidade_id,endereco_cidade_estado_id) VALUES ('MUFFATO','12345678910125',1,1,1);
 INSERT INTO supermercado (nome,cnpj,endereco_id,endereco_cidade_id,endereco_cidade_estado_id) VALUES ('GUGÂO','12345678910124',1,1,1);
 
-SELECT * FROM supermercado;
+SELECT supermercado.nome,supermercado.cnpj,endereco.id,endereco.rua,endereco.numero,cidade.id,cidade.nome,estado.id,estado.nome,estado.sigla FROM supermercado 
+JOIN endereco ON supermercado.endereco_id=endereco.id
+JOIN cidade ON supermercado.endereco_cidade_id=cidade.id
+JOIN estado ON supermercado.endereco_cidade_estado_id=estado.id;
+
+
+
 DROP TABLE IF EXISTS produto;
 CREATE TABLE produto (
 id INT PRIMARY KEY AUTO_INCREMENT NOT NULL UNIQUE
@@ -147,7 +159,10 @@ INSERT INTO pedido(supermercado_id,cd_id,produto_id) VALUES (2,1,4);
 INSERT INTO pedido(supermercado_id,cd_id,produto_id) VALUES (3,3,5);
 
 
-SELECT * FROM pedido;
+SELECT supermercado.id,supermercado.nome,supermercado.cnpj,cd.id,cd.nome,cd.cnpj,produto.id,produto.nome,produto.codigo_de_barras,produto.custo,produto.preco FROM pedido 
+JOIN supermercado ON pedido.supermercado_id=supermercado.id
+JOIN cd ON pedido.cd_id=cd.id 
+JOIN produto ON pedido.produto_id=produto.id;
 
 CREATE TABLE compra (
 id INT NOT NULL PRIMARY KEY AUTO_INCREMENT UNIQUE
@@ -164,5 +179,9 @@ INSERT INTO compra (cd_id,industria_id,produto_id) VALUES(2,2,2);
 INSERT INTO compra (cd_id,industria_id,produto_id) VALUES(3,3,4);
 
 
-SELECT *FROM compra;
+
+SELECT cd.id,cd.nome,cd.cnpj,industria.id,industria.nome,industria.cnpj,produto.id,produto.nome,produto.codigo_de_barras,produto.custo,produto.preco FROM compra
+JOIN cd ON compra.cd_id=cd.id
+JOIN industria ON compra.industria_id=industria.id
+JOIN produto ON compra.produto_id=produto.id;
 
